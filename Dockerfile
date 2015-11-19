@@ -1,10 +1,11 @@
-FROM node:4.1.1-slim
+FROM alpine:3.2
 MAINTAINER Ash Wilson <smashwilson@gmail.com>
 
-RUN apt-get update && apt-get install -y git
+RUN apk add --update nodejs git && rm -rf /var/cache/apk/*
+
 RUN npm install -g coffee-script
-RUN useradd pushbot
-RUN mkdir -p /usr/src/app
+RUN adduser -D -s /bin/sh pushbot
+RUN mkdir -p /usr/src/app /usr/src/app/botdata /home/pushbot/.ssh/
 
 WORKDIR /usr/src/app
 ADD package.json /usr/src/app/package.json
@@ -13,4 +14,4 @@ ADD . /usr/src/app
 RUN chown -R pushbot:pushbot /usr/src/app
 
 USER pushbot
-ENTRYPOINT ["/usr/src/app/node_modules/.bin/hubot", "-a", "slack"]
+ENTRYPOINT ["/usr/src/app/bin/pushbot-slack"]

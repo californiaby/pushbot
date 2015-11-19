@@ -2,11 +2,17 @@
 #
 # Launch PushBot with all the right environment variables and stuff.
 
-set -e
+set -euo pipefail
 
-DIR=`dirname $0`/..
-cd ${DIR}
+printf "%s" ${SSH_KEY} > ${HOME}/.ssh/id_rsa
 
-source .botrc
+ROOT=`dirname $0`/..
+cd ${ROOT}
+
+git clone https://gitlab.com/smashwilson/pushbot-data.git ${ROOT}/botdata/
+
+export HUBOT_LISTS_ROOT=${ROOT}/botdata/
+export HUBOT_MAPPING_DATAROOT=${ROOT}/botdata/
+export HUBOT_QUOTEFILE_PATH=${ROOT}/botdata/quotes.txt
 
 exec node_modules/.bin/hubot -a slack
